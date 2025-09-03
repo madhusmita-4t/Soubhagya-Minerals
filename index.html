@@ -1,0 +1,2553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IronDealer Pro - Complete Iron Trading Management System</title>
+    <meta name="description" content="Comprehensive iron dealership management system with order tracking, inventory management, GST/TCS calculation, and invoice generation">
+    <meta name="keywords" content="iron trading, dealership management, inventory system, GST calculator, TCS calculator, invoice generator">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+          --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --accent: #3498db;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #2980b9;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar {
+            background: var(--dark);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+            width: 250px;
+            z-index: 1000;
+        }
+        
+        .sidebar-sticky {
+            position: relative;
+            height: 100%;
+            padding-top: 20px;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            margin: 4px 0;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .sidebar .nav-link i {
+            width: 24px;
+            text-align: center;
+            margin-right: 10px;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--accent);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+              .dashboard-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background-color: white;
+        }
+        
+        .invoice-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 20px auto;
+        }
+        
+        .invoice-header {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            }
+        
+        .invoice-table th {
+            background-color: #f8f9fa;
+        }
+        
+        .tax-calculation {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        
+        .ai-suggestion {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar-container {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--success);
+            border-radius: 5px;
+        }
+        
+        .password-strength {
+            height: 5px;
+            margin-top: 5px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+        }
+        
+        /* Animation classes */
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse {
+          animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .form-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-buttons .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen (Initially Visible) -->
+    <div id="loginScreen" class="login-container animate-fade-in">
+        <div class="text-center mb-4">
+            <img src="https://img.icons8.com/dusk/64/000000/iron.png" alt="IronDealer Pro Logo" class="mb-3">
+            <h3>IronDealer Pro</h3>
+            <p class="text-muted">Complete Iron Trading Management System</p>
+        </div>
+        
+        <div id="loginError" class="alert alert-danger d-none" role="alert">
+            Invalid username or password
+        </div>
+        
+        <form id="loginForm">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Sign in</button>
+        </form>
+    </div>
+
+    <!-- Main Application (Initially Hidden) -->
+    <div id="appContainer" class="d-none">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-sticky pt-4">
+                <div class="text-center mb-4">
+                    <img src="https://img.icons8.com/dusk/64/000000/iron.png" alt="Logo">
+                    <h4 class="mt-2">IronDealer Pro</h4>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                      <a class="nav-link active" href="#" data-section="dashboard">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="orders">
+                            <i class="fas fa-shopping-cart"></i> Orders
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="inventory">
+                            <i class="fas fa-boxes"></i> Inventory
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="partners">
+                            <i class="fas fa-handshake"></i> Partners
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="transport">
+                            <i class="fas fa-truck"></i> Transport
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="payments">
+                            <i class="fas fa-money-bill-wave"></i> Payments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="employees">
+                            <i class="fas fa-users"></i> Employees
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="analytics">
+                            <i class="fas fa-chart-line"></i> Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="profile">
+                            <i class="fas fa-user-cog"></i> Profile
+                        </a>
+                    </li>
+                    <li class="nav-item mt-5">
+                        <a class="nav-link" href="#" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <span class="navbar-text me-3" id="usernameDisplay">Welcome, Admin</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <div id="contentArea">
+                <!-- Content will be loaded here dynamically -->
+            </div>
+        </div>
+    </div>
+    <!-- Invoice Modal -->
+    <div class="modal fade" id="invoiceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Generate Invoice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="invoice-container">
+                        <div class="invoice-header">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h2>INVOICE</h2>
+                                    <p class="mb-0"><strong>Invoice #:</strong> <span id="invoiceNumber"></span></p>
+                                    <p class="mb-0"><strong>Date:</strong> <span id="invoiceDate"></span></p>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <h3>IRON TRADING CO.</h3>
+                                    <p class="mb-0">123 Steel Avenue</p>
+                                    <p class="mb-0">Metro City, MC 12345</p>
+                                    <p class="mb-0">GSTIN: 12ABCDE1234F1Z5</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5>Bill To:</h5>
+                                <p id="invoiceCustomer" class="mb-0"></p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Order Details:</h5>
+                                <p class="mb-0"><strong>Order #:</strong> <span id="invoiceOrderNumber"></span></p>
+                                <p class="mb-0"><strong>Order Date:</strong> <span id="invoiceOrderDate"></span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table invoice-table">
+                                <thead>
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoiceItems">
+                                    <!-- Items will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="row justify-content-end">
+                            <div class="col-md-6">
+                                <div class="tax-calculation">
+                                    <div class="row mb-2">
+                                        <div class="col-6">Subtotal:</div>
+                                        <div class="col-6 text-end">₹<span id="invoiceSubtotal">0.00</span></div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-6">
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text">GST</span>
+                                                <input type="number" class="form-control" id="gstPercentage" value="18" min="0" max="100">
+                                              <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 text-end">₹<span id="gstAmount">0.00</span></div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-6">
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text">TCS</span>
+                                                <input type="number" class="form-control" id="tcsPercentage" value="1" min="0" max="100">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 text-end">₹<span id="tcsAmount">0.00</span></div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-6"><strong>Total Amount:</strong></div>
+                                        <div class="col-6 text-end"><strong>₹<span id="invoiceTotal">0.00</span></strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h5>Payment Terms:</h5>
+                            <p>Net 30 days. Please make payment by the due date.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="printInvoice">Print Invoice</button>
+                    <button type="button" class="btn btn-success" id="downloadInvoice">Download PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Order Modal -->
+    <div class="modal fade" id="addOrderModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="orderForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="orderBuyer" class="form-label">Buyer</label>
+                                    <select class="form-select" id="orderBuyer" required>
+                                        <option value="">Select Buyer</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="orderMaterial" class="form-label">Material</label>
+                                    <select class="form-select" id="orderMaterial" required>
+                                        <option value="">Select Material</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                          <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="orderQuantity" class="form-label">Quantity (tons)</label>
+                                    <input type="number" class="form-control" id="orderQuantity" required min="1" step="0.01">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="orderPrice" class="form-label">Unit Price (₹)</label>
+                                    <input type="number" class="form-control" id="orderPrice" required min="1" step="0.01">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="orderDate" class="form-label">Order Date</label>
+                                    <input type="date" class="form-control" id="orderDate" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="orderNotes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="orderNotes" rows="2"></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="orderGst" class="form-label">GST Percentage</label>
+                                    <input type="number" class="form-control" id="orderGst" value="18" min="0" max="100" step="0.01">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="orderTcs" class="form-label">TCS Percentage</label>
+                                    <input type="number" class="form-control" id="orderTcs" value="1" min="0" max="100" step="0.01">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <strong>Total Amount: ₹<span id="orderTotalPreview">0.00</span></strong>
+                            <div>GST Amount: ₹<span id="orderGstPreview">0.00</span></div>
+                            <div>TCS Amount: ₹<span id="orderTcsPreview">0.00</span></div>
+                            <div>Final Amount: ₹<span id="orderFinalPreview">0.00</span></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveOrder">Save Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Item Modal (for inventory, partners, transport, employees, payments) -->
+    <div class="modal fade" id="addItemModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addItemModalTitle">Add New Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                <div class="modal-body">
+                    <form id="itemForm">
+                        <!-- Form content will be dynamically populated based on the type -->
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveItem">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Payment Modal -->
+    <div class="modal fade" id="addPaymentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="paymentForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="paymentOrder" class="form-label">Order</label>
+                                    <select class="form-select" id="paymentOrder" required>
+                                        <option value="">Select Order</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="paymentAmount" class="form-label">Amount (₹)</label>
+                                    <input type="number" class="form-control" id="paymentAmount" required min="1" step="0.01">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="paymentDate" class="form-label">Payment Date</label>
+                                    <input type="date" class="form-control" id="paymentDate" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="paymentMethod" class="form-label">Payment Method</label>
+                                    <select class="form-select" id="paymentMethod" required>
+                                        <option value="">Select Method</option>
+                                        <option value="cash">Cash</option>
+                                        <option value="bank_transfer">Bank Transfer</option>
+                                        <option value="check">Check</option>
+                                        <option value="upi">UPI</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="paymentReference" class="form-label">Reference Number</label>
+                          <input type="text" class="form-control" id="paymentReference">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="paymentNotes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="paymentNotes" rows="2"></textarea>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <div>Order Total: ₹<span id="paymentOrderTotal">0.00</span></div>
+                            <div>Previously Paid: ₹<span id="paymentPreviouslyPaid">0.00</span></div>
+                            <div>Remaining Balance: ₹<span id="paymentRemainingBalance">0.00</span></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="savePayment">Save Payment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="changePasswordForm">
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" required>
+                            <div class="form-text">Password must be at least 8 characters long</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="savePassword">Change Password</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Database simulation using localStorage
+        const IronTradingDB = {
+            init: function() {
+                if (!localStorage.getItem('ironTradingInitialized')) {
+                    // Initialize with sample data
+                    const sampleData = {
+                        users: [
+                            { id: 1, username: 'Pradeep391', password: 'admin123', role: 'admin' },
+                            { id: 2, username: 'manager', password: 'manager123', role: 'manager' },
+                            { id: 3, username: 'employee', password: 'employee123', role: 'employee' }
+                        ],
+                        employees: [
+                            { id: 1, user_id: 1, name: 'John Admin', email: 'john@example.com', phone: '123-456-7890', address: '123 Main St', position: 'Administrator', salary: 75000, hire_date: '2023-01-15' },
+                            { id: 2, user_id: 2, name: 'Jane Manager', email: 'jane@example.com', phone: '123-456-7891', address: '456 Oak St', position: 'Operations Manager', salary: 65000, hire_date: '2023-02-20' },
+                            { id: 3, user_id: 3, name: 'Bob Employee', email: 'bob@example.com', phone: '123-456-7892', address: '789 Pine St', position: 'Sales Executive', salary: 55000, hire_date: '2023-03-10' }
+                        ],
+                        partners: [
+                            { id: 1, name: 'ABC Steel Mills', type: 'supplier', contact_person: 'Michael Smith', email: 'michael@abc.com', phone: '555-0101', address: '123 Industrial Area', bank_details: 'Bank of America, ACC: 123456789', gstin: '12ABCDE1234F1Z1' },
+                            { id: 2, name: 'XYZ Metal Works', type: 'supplier', contact_person: 'Sarah Johnson', email: 'sarah@xyz.com', phone: '555-0102', address: '456 Manufacturing Zone', bank_details: 'Wells Fargo, ACC: 987654321', gstin: '12ABCDE1234F1Z2' },
+                            { id: 3, name: 'Global Construction Ltd', type: 'buyer', contact_person: 'Robert Brown', email: 'robert@global.com', phone: '555-0201', address: '789 Construction Blvd', bank_details: 'Chase, ACC: 456123789', gstin: '12ABCDE1234F1Z3' },
+                            { id: 4, name: 'Metro Builders Inc', type: 'buyer', contact_person: 'Lisa Davis', email: 'lisa@metro.com', phone: '555-0202', address: '321 Development Ave', bank_details: 'Citibank, ACC: 789456123', gstin: '12ABCDE1234F1Z4' }
+                        ],
+                        materials: [
+                            { id: 1, name: 'Mild Steel Plates', description: 'Structural steel plates', grade: 'A36', quantity: 500, unit: 'tons', cost_per_unit: 850, supplier_id: 1, purchase_date: '2023-06-15', hsn_code: '7208' },
+                            { id: 2, name: 'Stainless Steel Coils', description: '304 stainless steel coils', grade: '304', quantity: 300, unit: 'tons', cost_per_unit: 2500, supplier_id: 2, purchase_date: '2023-07-01', hsn_code: '7219' },
+                            { id: 3, name: 'Iron Rods', description: 'Reinforcement iron rods', grade: '40', quantity: 200, unit: 'tons', cost_per_unit: 700, supplier_id: 1, purchase_date: '2023-07-10', hsn_code: '7214' },
+                            { id: 4, name: 'Galvanized Sheets', description: 'Corrosion-resistant sheets', grade: 'G90', quantity: 150, unit: 'tons', cost_per_unit: 1200, supplier_id: 2, purchase_date: '2023-07-20', hsn_code: '7210' }
+                        ],
+                        orders: [
+                            { id: 1, order_number: 'ORD001', buyer_id: 3, material_id: 1, quantity: 50, unit_price: 950, total_amount: 47500, status: 'completed', order_date: '2023-08-01', expected_delivery: '2023-08-10', notes: 'Urgent delivery required', gst_percentage: 18, tcs_percentage: 1 },
+                            { id: 2, order_number: 'ORD002', buyer_id: 4, material_id: 2, quantity: 20, unit_price: 2800, total_amount: 56000, status: 'in_production', order_date: '2023-08-05', expected_delivery: '2023-08-20', notes: 'Special packaging requested', gst_percentage: 18, tcs_percentage: 1 },
+                            { id: 3, order_number: 'ORD003', buyer_id: 3, material_id: 3, quantity: 30, unit_price: 800, total_amount: 24000, status: 'pending', order_date: '2023-08-10', expected_delivery: '2023-08-25', notes: '', gst_percentage: 18, tcs_percentage: 1 },
+                            { id: 4, order_number: 'ORD004', buyer_id: 4, material_id: 4, quantity: 25, unit_price: 1350, total_amount: 33750, status: 'shipped', order_date: '2023-08-12', expected_delivery: '2023-08-22', notes: 'Fragile handling required', gst_percentage: 18, tcs_percentage: 1 }
+                        ],
+                        transport: [
+                             { id: 1, order_id: 1, transporter_name: 'FastFreight Inc', vehicle_number: 'TRK1234', driver_name: 'David Wilson', driver_contact: '555-0301', dispatch_date: '2023-08-08', expected_arrival: '2023-08-10', actual_arrival: '2023-08-10', shipping_cost: 1500, status: 'delivered', notes: 'On-time delivery' },
+                            { id: 2, order_id: 2, transporter_name: 'QuickShip Logistics', vehicle_number: 'TRK5678', driver_name: 'Emily Clark', driver_contact: '555-0302', dispatch_date: '2023-08-18', expected_arrival: '2023-08-20', actual_arrival: null, shipping_cost: 1800, status: 'scheduled', notes: 'Requires temperature control' },
+                            { id: 3, order_id: 4, transporter_name: 'Reliable Transport', vehicle_number: 'TRK9012', driver_name: 'James Anderson', driver_contact: '555-0303', dispatch_date: '2023-08-15', expected_arrival: '2023-08-22', actual_arrival: null, shipping_cost: 1650, status: 'in_transit', notes: 'Track shipment for updates' }
+                        ],
+                        payments: [
+                            { id: 1, order_id: 1, amount: 47500, payment_date: '2023-08-12', payment_method: 'bank_transfer', reference_number: 'BT20230812123456', status: 'completed', notes: 'Payment received in full' },
+                            { id: 2, order_id: 2, amount: 28000, payment_date: '2023-08-06', payment_method: 'check', reference_number: 'CHK87654321', status: 'pending', notes: 'Check deposited, awaiting clearance' },
+                            { id: 3, order_id: 4, amount: 16875, payment_date: '2023-08-13', payment_method: 'bank_transfer', reference_number: 'BT20230813456789', status: 'completed', notes: '50% advance payment received' }
+                        ],
+                        invoices: [
+                            { id: 1, invoice_number: 'INV20230815001', order_id: 1, issue_date: '2023-08-15', due_date: '2023-09-14', subtotal: 47500, gst_percentage: 18, gst_amount: 8550, tcs_percentage: 1, tcs_amount: 475, total_amount: 56525, status: 'paid' }
+                        ]
+                    };
+
+                    for (const key in sampleData) {
+                        localStorage.setItem(key, JSON.stringify(sampleData[key]));
+                    }
+                    
+                    localStorage.setItem('ironTradingInitialized', 'true');
+                }
+            },
+
+            get: function(table, id = null) {
+                const data = JSON.parse(localStorage.getItem(table) || '[]');
+                if (id) {
+                    return data.find(item => item.id === id);
+                }
+                return data;
+            },
+
+            create: function(table, item) {
+                const data = JSON.parse(localStorage.getItem(table) || '[]');
+                item.id = data.length > 0 ? Math.max(...data.map(i => i.id)) + 1 : 1;
+                data.push(item);
+                localStorage.setItem(table, JSON.stringify(data));
+                return item;
+            },
+
+            update: function(table, id, updates) {
+                const data = JSON.parse(localStorage.getItem(table) || '[]');
+                const index = data.findIndex(item => item.id === id);
+                if (index !== -1) {
+                    data[index] = { ...data[index], ...updates };
+                    localStorage.setItem(table, JSON.stringify(data));
+                    return data[index];
+                }
+                return null;
+            },
+
+            delete: function(table, id) {
+                const data = JSON.parse(localStorage.getItem(table) || '[]');
+                const filteredData = data.filter(item => item.id !== id);
+                localStorage.setItem(table, JSON.stringify(filteredData));
+                return true;
+            }
+        };
+      // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            IronTradingDB.init();
+            
+            // Login form handling
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                const users = IronTradingDB.get('users');
+                const user = users.find(u => u.username === username && u.password === password);
+                
+                if (user) {
+                    // Successful login
+                    document.getElementById('loginScreen').classList.add('d-none');
+                    document.getElementById('appContainer').classList.remove('d-none');
+                    document.getElementById('usernameDisplay').textContent = `Welcome, ${user.username}`;
+                    
+                    // Store current user
+                    window.currentUser = user;
+                    
+                    // Load dashboard
+                    loadSection('dashboard');
+                } else {
+                    // Failed login
+                    document.getElementById('loginError').classList.remove('d-none');
+                }
+            });
+            
+            // Logout handling
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                document.getElementById('appContainer').classList.add('d-none');
+                document.getElementById('loginScreen').classList.remove('d-none');
+                document.getElementById('loginError').classList.add('d-none');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+            });
+            
+            // Navigation handling
+            document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    
+                    // Update active state
+                    document.querySelectorAll('.nav-link').forEach(navLink => {
+                        navLink.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Load section
+                    loadSection(section);
+                });
+            });
+
+            // Invoice generation handlers
+            document.getElementById('gstPercentage').addEventListener('input', calculateTaxes);
+            document.getElementById('tcsPercentage').addEventListener('input', calculateTaxes);
+            document.getElementById('printInvoice').addEventListener('click', printInvoice);
+            document.getElementById('downloadInvoice').addEventListener('click', downloadInvoice);
+            
+            // Order form handlers
+            document.getElementById('orderQuantity').addEventListener('input', calculateOrderTotal);
+            document.getElementById('orderPrice').addEventListener('input', calculateOrderTotal);
+            document.getElementById('orderGst').addEventListener('input', calculateOrderTotal);
+            document.getElementById('orderTcs').addEventListener('input', calculateOrderTotal);
+            document.getElementById('saveOrder').addEventListener('click', saveOrder);
+            
+            // Item form handler
+            document.getElementById('saveItem').addEventListener('click', saveItem);
+            
+            // Payment form handler
+            document.getElementById('savePayment').addEventListener('click', savePayment);
+            document.getElementById('paymentOrder').addEventListener('change', updatePaymentInfo);
+            
+            // Password change handler
+            document.getElementById('savePassword').addEventListener('click', changePassword);
+            
+            // Set current date as default for order date
+            document.getElementById('orderDate').valueAsDate = new Date();
+            document.getElementById('paymentDate').valueAsDate = new Date();
+        });
+
+        // Section loading functions
+        function loadSection(section) {
+            switch(section) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'orders':
+                    loadOrders();
+                    break;
+                case 'inventory':
+                    loadInventory();
+                    break;
+                case 'partners':
+                    loadPartners();
+                    break;
+                case 'transport':
+                    loadTransport();
+                    break;
+                case 'payments':
+                    loadPayments();
+                    break;
+                case 'employees':
+                    loadEmployees();
+                    break;
+                case 'analytics':
+                    loadAnalytics();
+                    break;
+                case 'profile':
+                    loadProfile();
+                    break;
+                default:
+                    loadDashboard();
+            }
+        }
+
+        function loadDashboard() {
+            const orders = IronTradingDB.get('orders');
+            const partners = IronTradingDB.get('partners');
+            const materials = IronTradingDB.get('materials');
+            const invoices = IronTradingDB.get('invoices');
+            
+            const totalOrders = orders.length;
+            const pendingOrders = orders.filter(o => o.status === 'pending').length;
+            const totalRevenue = orders.filter(o => o.status === 'completed')
+                                      .reduce((sum, order) => sum + order.total_amount, 0);
+            const totalPartners = partners.length;
+            const lowStock = materials.filter(m => m.quantity < 100).length;
+            const totalInvoices = invoices.length;
+            const pendingInvoices = invoices.filter(i => i.status !== 'paid').length;
+            
+            const recentOrders = orders.slice(0, 5).map(order => {
+                const buyer = partners.find(p => p.id === order.buyer_id);
+                return { ...order, buyer_name: buyer ? buyer.name : 'Unknown' };
+            });
+const recentInvoices = invoices.slice(0, 3).map(invoice => {
+                const order = orders.find(o => o.id === invoice.order_id);
+                const buyer = order ? partners.find(p => p.id === order.buyer_id) : null;
+                return {
+                    ...invoice,
+                    order_number: order ? order.order_number : 'Unknown',
+                    buyer_name: buyer ? buyer.name : 'Unknown'
+                };
+            });
+            
+            const content = `
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="mb-4">Dashboard</h2>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-uppercase">Total Orders</h6>
+                                    <h3>${totalOrders}</h3>
+                                </div>
+                                <i class="fas fa-shopping-cart fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card" style="border-left-color: #e74c3c;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-uppercase">Pending Orders</h6>
+                                    <h3>${pendingOrders}</h3>
+                                </div>
+                                <i class="fas fa-clock fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card" style="border-left-color: #27ae60;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-uppercase">Total Revenue</h6>
+                                    <h3>₹${totalRevenue.toLocaleString()}</h3>
+                                </div>
+                                <i class="fas fa-dollar-sign fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card" style="border-left-color: #f39c12;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-uppercase">Low Stock Items</h6>
+                                    <h3>${lowStock}</h3>
+                                </div>
+                                <i class="fas fa-exclamation-triangle fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-lg-8">
+                        <div class="dashboard-card">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Recent Orders</h5>
+                                <button class="btn btn-sm btn-primary" onclick="loadSection('orders')">View All</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                        <th>Order #</th>
+                                            <th>Buyer</th>
+                                            <th>Quantity</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${recentOrders.map(order => `
+                                            <tr>
+                                                <td>${order.order_number}</td>
+                                                <td>${order.buyer_name}</td>
+                                                <td>${order.quantity} tons</td>
+                                                <td>₹${order.total_amount.toLocaleString()}</td>
+                                                <td>
+                                                    <span class="badge bg-${ 
+                                                        order.status === 'completed' ? 'success' : 
+                                                        order.status === 'pending' ? 'warning' : 
+                                                        order.status === 'cancelled' ? 'danger' : 'info'
+                                                    }">
+                                                        ${order.status}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <button class="btn btn-sm btn-info" onclick="viewOrder(${order.id})">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-warning" onclick="editItem('order', ${order.id})">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        ${order.status === 'completed' ? `
+                                                        <button class="btn btn-sm btn-success" onclick="generateInvoice(${order.id})">
+                                                            <i class="fas fa-file-invoice"></i>
+                                                        </button>
+                                                        ` : ''}
+                                                        <button class="btn btn-sm btn-danger" onclick="deleteItem('order', ${order.id})">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card mt-4">
+                            <h5 class="mb-3">AI-Powered Suggestions</h5>
+                            <div class="ai-suggestion">
+                                <h6><i class="fas fa-robot me-2"></i> Inventory Recommendation</h6>
+                                <p>Based on your sales trends, we recommend increasing stock of Mild Steel Plates by 20% for the upcoming month.</p>
+                            </div>
+                            <div class="ai-suggestion mt-3" style="background: linear-gradient(135deg, #5D4157 0%, #A8CABA 100%);">
+                                <h6><i class="fas fa-chart-line me-2"></i> Sales Insight</h6>
+                                <p>Orders typically increase by 15% during the last week of the month. Consider preparing additional inventory.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="dashboard-card">
+                            <h5 class="mb-3">Quick Actions</h5>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary mb-2" onclick="showAddOrderModal()">
+                                    <i class="fas fa-plus me-2"></i> Create New Order
+                                </button>
+                                <button class="btn btn-outline-primary mb-2" onclick="loadSection('inventory')">
+                                    <i class="fas fa-boxes me-2"></i> Manage Inventory
+                                </button>
+                                <button class="btn btn-outline-primary mb-2" onclick="loadSection('partners')">
+                                    <i class="fas fa-handshake me-2"></i> Manage Partners
+                                </button>
+                                <button class="btn btn-outline-primary mb-2" onclick="loadSection('transport')">
+                                    <i class="fas fa-truck me-2"></i> Schedule Transport
+                                </button>
+                                <button class="btn btn-outline-success mb-2" onclick="showInvoiceGenerator()">
+                                    <i class="fas fa-file-invoice me-2"></i> Generate Invoice
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-card mt-4">
+                            <h5 class="mb-3">Recent Invoices</h5>
+                            <div class="list-group">
+                                ${recentInvoices.map(invoice => `
+                                    <div class="list-group-item">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">${invoice.invoice_number}</h6>
+                                            <small class="text-${invoice.status === 'paid' ? 'success' : 'warning'}">${invoice.status}</small>
+                                        </div>
+                                        <p class="mb-1">${invoice.buyer_name}</p>
+                                        <small>₹${invoice.total_amount.toLocaleString()} • ${new Date(invoice.issue_date).toLocaleDateString()}</small>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-card mt-4">
+                            <h5 class="mb-3">Orders by Status</h5>
+                            <canvas id="orderStatusChart" width="300" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+            
+            // Render chart
+            const ctx = document.getElementById('orderStatusChart').getContext('2d');
+            const statusCounts = {
+                'completed': orders.filter(o => o.status === 'completed').length,
+                'pending': orders.filter(o => o.status === 'pending').length,
+                'in_production': orders.filter(o => o.status === 'in_production').length,
+                'shipped': orders.filter(o => o.status === 'shipped').length,
+                'cancelled': orders.filter(o => o.status === 'cancelled').length
+            };
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'Pending', 'In Production', 'Shipped', 'Cancelled'],
+                    datasets: [{
+                        data: [
+                            statusCounts.completed,
+                            statusCounts.pending,
+                            statusCounts.in_production,
+                            statusCounts.shipped,
+                            statusCounts.cancelled
+                        ],
+                        backgroundColor: [
+                            '#4bc0c0',
+                            '#ffcd56',
+                            '#36a2eb',
+                            '#ff6384',
+                            '#c9cbcf'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadOrders() {
+            const orders = IronTradingDB.get('orders');
+            const partners = IronTradingDB.get('partners');
+            const materials = IronTradingDB.get('materials');
+            
+            const ordersWithDetails = orders.map(order => {
+                const buyer = partners.find(p => p.id === order.buyer_id);
+                const material = materials.find(m => m.id === order.material_id);
+                return {
+                    ...order,
+                    buyer_name: buyer ? buyer.name : 'Unknown',
+                    material_name: material ? material.name : 'Unknown'
+                };
+            });
+            
+            const content = `
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2>Order Management</h2>
+                            <button class="btn btn-primary" onclick="showAddOrderModal()">
+                                <i class="fas fa-plus me-2"></i> New Order
+                            </button>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Order #</th>
+                                        <th>Buyer</th>
+                                        <th>Material</th>
+                                        <th>Quantity</th>
+                                        <th>Amount</th>
+                                        <th>Order Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${ordersWithDetails.map(order => `
+                                        <tr>
+                                            <td>${order.order_number}</td>
+                                            <td>${order.buyer_name}</td>
+                                            <td>${order.material_name}</td>
+                                            <td>${order.quantity} tons</td>
+                                            <td>₹${order.total_amount.toLocaleString()}</td>
+                                            <td>${new Date(order.order_date).toLocaleDateString()}</td>
+                                            <td>
+                                                <span class="badge bg-${ 
+                                                  order.status === 'completed' ? 'success' : 
+                                                    order.status === 'pending' ? 'warning' : 
+                                                    order.status === 'cancelled' ? 'danger' : 'info'
+                                                }">
+                                                    ${order.status}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <button class="btn btn-sm btn-info" onclick="viewOrder(${order.id})">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-warning" onclick="editItem('order', ${order.id})">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    ${order.status === 'completed' ? `
+                                                    <button class="btn btn-sm btn-success" onclick="generateInvoice(${order.id})">
+                                                        <i class="fas fa-file-invoice"></i>
+                                                    </button>
+                                                    ` : ''}
+                                                    <button class="btn btn-sm btn-danger" onclick="deleteItem('order', ${order.id})">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        function loadInventory() {
+            const materials = IronTradingDB.get('materials');
+            const partners = IronTradingDB.get('partners');
+            
+            const materialsWithSupplier = materials.map(material => {
+                const supplier = partners.find(p => p.id === material.supplier_id);
+                return {
+                    ...material,
+                    supplier_name: supplier ? supplier.name : 'Unknown'
+                };
+            });
+            const content = `
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2>Inventory Management</h2>
+                            <button class="btn btn-primary" onclick="showAddItemModal('material')">
+                                <i class="fas fa-plus me-2"></i> Add New Material
+                            </button>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Material</th>
+                                        <th>Description</th>
+                                        <th>Grade</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Cost</th>
+                                        <th>Supplier</th>
+                                        <th>Purchase Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${materialsWithSupplier.map(material => `
+                                        <tr>
+                                            <td>${material.name}</td>
+                                            <td>${material.description}</td>
+                                            <td>${material.grade}</td>
+                                            <td>${material.quantity} ${material.unit}</td>
+                                            <td>₹${material.cost_per_unit.toLocaleString()}</td>
+                                            <td>${material.supplier_name}</td>
+                                            <td>${new Date(material.purchase_date).toLocaleDateString()}</td>
+                                            <td>
+                                                <span class="badge bg-${material.quantity < 100 ? 'warning' : 'success'}">
+                                                    ${material.quantity < 100 ? 'Low Stock' : 'In Stock'}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <button class="btn btn-sm btn-info" onclick="viewItem('material', ${material.id})">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-warning" onclick="editItem('material', ${material.id})">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger" onclick="deleteItem('material', ${material.id})">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        function loadPartners() {
+            const partners = IronTradingDB.get('partners');
+          const content = `
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2>Partner Management</h2>
+                            <button class="btn btn-primary" onclick="showAddItemModal('partner')">
+                                <i class="fas fa-plus me-2"></i> Add New Partner
+                            </button>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                        <th>Contact Person</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Address</th>
+                                        <th>GSTIN</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${partners.map(partner => `
+                                        <tr>
+                                            <td>${partner.name}</td>
+                                            <td>
+                                                <span class="badge bg-${partner.type === 'supplier' ? 'primary' : 'success'}">
+                                                    ${partner.type}
+                                                </span>
+                                            </td>
+                                            <td>${partner.contact_person}</td>
+                                            <td>${partner.email}</td>
+                                            <td>${partner.phone}</td>
+                                            <td>${partner.address}</td>
+                                            <td>${partner.gstin || 'N/A'}</td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <button class="btn btn-sm btn-info" onclick="viewItem('partner', ${partner.id})">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-warning" onclick="editItem('partner', ${partner.id})">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger" onclick="deleteItem('partner', ${partner.id})">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        function loadTransport() {
+            const transport = IronTradingDB.get('transport');
+            const orders = IronTradingDB.get('orders');
+            const partners = IronTradingDB.get('partners');
+            const transportWithDetails = transport.map(t => {
+                const order = orders.find(o => o.id === t.order_id);
+                const buyer = order ? partners.find(p => p.id === order.buyer_id) : null;
+                return {
+                    ...t,
+                    order_number: order ? order.order_number : 'Unknown',
+                    buyer_name: buyer ? buyer.name : 'Unknown'
+                };
+            });
+            
+            const content = `
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2>Transport Management</h2>
+                            <button class="btn btn-primary" onclick="showAddItemModal('transport')">
+                                <i class="fas fa-plus me-2"></i> Add Transport
+                            </button>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Order #</th>
+                                        <th>Buyer</th>
+                                        <th>Transporter</th>
+                                        <th>Vehicle #</th>
+                                        <th>Driver</th>
+                                        <th>Dispatch Date</th>
+                                        <th>Expected Arrival</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${transportWithDetails.map(t => `
+                                        <tr>
+                                            <td>${t.order_number}</td>
+                                            <td>${t.buyer_name}</td>
+                                            <td>${t.transporter_name}</td>
+                                            <td>${t.vehicle_number}</td>
+                                            <td>${t.driver_name}</td>
+                                            <td>${new Date(t.dispatch_date).toLocaleDateString()}</td>
+                                            <td>${new Date(t.expected_arrival).toLocaleDateString()}</td>
+                                            <td>
+                                                <span class="badge bg-${ 
+                                                    t.status === 'delivered' ? 'success' : 
+                                                    t.status === 'in_transit' ? 'info' : 'warning'
+                                                }">
+                                                    ${t.status}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <button class="btn btn-sm btn-info" onclick="viewItem('transport', ${t.id})">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-warning" onclick="editItem('transport', ${t.id})">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger" onclick="deleteItem('transport', ${t.id})">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        function loadPayments() {
+            const payments = IronTradingDB.get('payments');
+            const orders = IronTradingDB.get('orders');
+            const partners = IronTradingDB.get('partners');
+            const paymentsWithDetails = payments.map(payment => {
+                const order = orders.find(o => o.id === payment.order_id);
+                const buyer = order ? partners.find(p => p.id === order.buyer_id) : null;
+                
+                // Calculate payment progress
+                const totalPaid = payments.filter(p => p.order_id === payment.order_id && p.status === 'completed')
+                                         .reduce((sum, p) => sum + p.amount, 0);
+                const paymentProgress = order ? (totalPaid / order.total_amount) * 100 : 0;
+                
+                return {
+                    ...payment,
+                    order_number: order ? order.order_number : 'Unknown',
+                    buyer_name: buyer ? buyer.name : 'Unknown',
+                    order_amount: order ? order.total_amount : 0,
+                    total_paid: totalPaid,
+                    payment_progress: paymentProgress,
+                    remaining_balance: order ? order.total_amount - totalPaid : 0
+                };
+            });
+            
+            const content = `
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2>Payment Management</h2>
+                            <button class="btn btn-primary" onclick="showAddPaymentModal()">
+                                <i class="fas fa-plus me-2"></i> Add Payment
+                            </button>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Order #</th>
+                                        <th>Buyer</th>
+                                        <th>Amount</th>
+                                        <th>Order Total</th>
+                                        <th>Paid</th>
+                                        <th>Balance</th>
+                                        <th>Payment Date</th>
+                                        <th>Method</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${paymentsWithDetails.map(payment => `
+                                        <tr>
+                                            <td>${payment.order_number}</td>
+                                            <td>${payment.buyer_name</td>
+                                            <td>₹${payment.amount.toLocaleString()}</td>
+                                            <td>₹${payment.order_amount.toLocaleString()}</td>
+                                            <td>₹${payment.total_paid.toLocaleString()}</td>
+                                            <td>₹${payment.remaining_balance.toLocaleString()}</td>
+                                            <td>${new Date(payment.payment_date).toLocaleDateString()}</td>
+                                            <td>${payment.payment_method}</td>
+                                            <td>
+                                                <span class="badge bg-${ 
+                                                    payment.status === 'completed' ? 'success' : 
+                                                    payment.status === 'pending' ? 'warning' : 'danger'
+                                                }">
+                                                    ${payment.status}
+                                                </span>
+                                                <div class="progress-bar-container">
+                                                    <div class="progress-bar" style="width: ${payment.payment_progress}%"></div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                <button class="btn btn-sm btn-info" onclick="viewItem('payment', ${payment.id})">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-warning" onclick="editItem('payment', ${payment.id})">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger" onclick="deleteItem('payment', ${payment.id})">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        function loadEmployees() {
+            const employees = IronTradingDB.get('employees');
+            
+            const content = `
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2>Employee Management</h2>
+                            <button class="btn btn-primary" onclick="showAddItemModal('employee')">
+                                <i class="fas fa-plus me-2"></i> Add Employee
+                            </button>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Position</th>
+                                        <th>Salary</th>
+                                        <th>Hire Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${employees.map(employee => `
+                                        <tr>
+                                            <td>${employee.name}</td>
+                                            <td>${employee.email}</td>
+                                            <td>${employee.phone}</td>
+                                            <td>${employee.position}</td>
+                                            <td>₹${employee.salary.toLocaleString()}</td>
+                                            <td>${new Date(employee.hire_date).toLocaleDateString()}</td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <button class="btn btn-sm btn-info" onclick="viewItem('employee', ${employee.id})">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-warning" onclick="editItem('employee', ${employee.id})">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger" onclick="deleteItem('employee', ${employee.id})">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        function loadAnalytics() {
+            const orders = IronTradingDB.get('orders');
+            const materials = IronTradingDB.get('materials');
+            const partners = IronTradingDB.get('partners');
+            
+            // Calculate revenue by month
+            const revenueByMonth = {};
+            orders.filter(o => o.status === 'completed').forEach(order => {
+                const month = new Date(order.order_date).toLocaleString('default', { month: 'long' });
+                revenueByMonth[month] = (revenueByMonth[month] || 0) + order.total_amount;
+            });
+            
+            // Calculate material distribution
+            const materialDistribution = {};
+            materials.forEach(material => {
+                materialDistribution[material.name] = material.quantity;
+            });
+            
+            const content = `
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="mb-4">Analytics & Reports</h2>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <h5 class="mb-3">Revenue by Month</h5>
+                            <canvas id="revenueChart" height="300"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <h5 class="mb-3">Material Distribution</h5>
+                            <canvas id="materialChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="dashboard-card">
+                            <h5 class="mb-3">Key Performance Indicators</h5>
+                            <div class="row">
+                                <div class="col-md-3 text-center">
+                                    <h4>${orders.filter(o => o.status === 'completed').length}</h4>
+                                    <p class="text-muted">Completed Orders</p>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <h4>₹${orders.filter(o => o.status === 'completed')
+                                        .reduce((sum, order) => sum + order.total_amount, 0)
+                                        .toLocaleString()}</h4>
+                                    <p class="text-muted">Total Revenue</p>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <h4>${partners.filter(p => p.type === 'buyer').length}</h4>
+                                    <p class="text-muted">Buyer Partners</p>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <h4>${partners.filter(p => p.type === 'supplier').length}</h4>
+                                    <p class="text-muted">Supplier Partners</p>
+                                </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+            
+            // Render revenue chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(revenueByMonth),
+                    datasets: [{
+                        label: 'Revenue (₹)',
+                        data: Object.values(revenueByMonth),
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₹' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Render material chart
+            const materialCtx = document.getElementById('materialChart').getContext('2d');
+            new Chart(materialCtx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(materialDistribution),
+                    datasets: [{
+                        data: Object.values(materialDistribution),
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF',
+                            '#FF9F40'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadProfile() {
+            const content = `
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="mb-4">User Profile</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="dashboard-card">
+                            <h5 class="mb-3">Account Information</h5>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Username:</strong></label>
+                                <p>${window.currentUser.username}</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Role:</strong></label>
+                                <p>${window.currentUser.role}</p>
+                            </div>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                <i class="fas fa-key me-2"></i> Change Password
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="dashboard-card">
+                            <h5 class="mb-3">System Information</h5>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Version:</strong></label>
+                                <p>IronDealer Pro v2.0</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Last Login:</strong></label>
+                                <p>${new Date().toLocaleString()}</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Browser:</strong></label>
+                                <p>${navigator.userAgent}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        // Invoice generation functions
+        function generateInvoice(orderId) {
+            const order = IronTradingDB.get('orders', orderId);
+            if (!order) return;
+            
+            const buyer = IronTradingDB.get('partners', order.buyer_id);
+            const material = IronTradingDB.get('materials', order.material_id);
+            
+            // Set invoice details
+            const invoiceNumber = 'INV' + new Date().getTime();
+            const invoiceDate = new Date().toLocaleDateString();
+            
+            document.getElementById('invoiceNumber').textContent = invoiceNumber;
+            document.getElementById('invoiceDate').textContent = invoiceDate;
+            document.getElementById('invoiceCustomer').innerHTML = `
+                <strong>${buyer.name}</strong><br>
+                ${buyer.contact_person}<br>
+                ${buyer.address}<br>
+                GSTIN: ${buyer.gstin || 'N/A'}
+            `;
+            document.getElementById('invoiceOrderNumber').textContent = order.order_number;
+            document.getElementById('invoiceOrderDate').textContent = new Date(order.order_date).toLocaleDateString();
+            
+            // Populate items
+            document.getElementById('invoiceItems').innerHTML = `
+                <tr>
+                    <td>${material.name} (${material.grade})<br><small>HSN: ${material.hsn_code}</small></td>
+                    <td>${order.quantity} ${material.unit}</td>
+                    <td>₹${order.unit_price.toLocaleString()}</td>
+                    <td>₹${order.total_amount.toLocaleString()}</td>
+                </tr>
+            `;
+          // Set subtotal
+            document.getElementById('invoiceSubtotal').textContent = order.total_amount.toFixed(2);
+            
+            // Set tax percentages
+            document.getElementById('gstPercentage').value = order.gst_percentage || 18;
+            document.getElementById('tcsPercentage').value = order.tcs_percentage || 1;
+            
+            // Calculate taxes
+            calculateTaxes();
+            
+            // Show modal
+            const invoiceModal = new bootstrap.Modal(document.getElementById('invoiceModal'));
+            invoiceModal.show();
+            
+            // Store current order for saving
+            window.currentInvoiceOrderId = orderId;
+        }
+
+        function calculateTaxes() {
+            const subtotal = parseFloat(document.getElementById('invoiceSubtotal').textContent.replace(/,/g, ''));
+            const gstPercentage = parseFloat(document.getElementById('gstPercentage').value);
+            const tcsPercentage = parseFloat(document.getElementById('tcsPercentage').value);
+            
+            const gstAmount = subtotal * (gstPercentage / 100);
+            const tcsAmount = subtotal * (tcsPercentage / 100);
+            const totalAmount = subtotal + gstAmount + tcsAmount;
+            
+            document.getElementById('gstAmount').textContent = gstAmount.toFixed(2);
+            document.getElementById('tcsAmount').textContent = tcsAmount.toFixed(2);
+            document.getElementById('invoiceTotal').textContent = totalAmount.toFixed(2);
+        }
+
+        function printInvoice() {
+            window.print();
+        }
+
+        function downloadInvoice() {
+            alert("In a real application, this would download the invoice as a PDF. For this demo, use the print function instead.");
+        }
+
+        function showInvoiceGenerator() {
+            const completedOrders = IronTradingDB.get('orders').filter(o => o.status === 'completed');
+            
+            if (completedOrders.length === 0) {
+                alert('No completed orders available for invoice generation.');
+                return;
+            }
+            
+            // For simplicity, generate invoice for the first completed order
+            generateInvoice(completedOrders[0].id);
+        }
+
+        function showAddOrderModal() {
+            // Populate buyer dropdown
+            const buyerSelect = document.getElementById('orderBuyer');
+            buyerSelect.innerHTML = '<option value="">Select Buyer</option>';
+            const buyers = IronTradingDB.get('partners').filter(p => p.type === 'buyer');
+            buyers.forEach(buyer => {
+                buyerSelect.innerHTML += `<option value="${buyer.id}">${buyer.name}</option>`;
+            });
+            
+            // Populate material dropdown
+            const materialSelect = document.getElementById('orderMaterial');
+            materialSelect.innerHTML = '<option value="">Select Material</option>';
+            const materials = IronTradingDB.get('materials');
+            materials.forEach(material => {
+                materialSelect.innerHTML += `<option value="${material.id}" data-price="${material.cost_per_unit}">${material.name} (₹${material.cost_per_unit}/ton)</option>`;
+            });
+            
+            // Set up material change event to auto-fill price
+            materialSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+              if (selectedOption && selectedOption.dataset.price) {
+                    document.getElementById('orderPrice').value = selectedOption.dataset.price;
+                    calculateOrderTotal();
+                }
+            });
+            
+            // Show modal
+            const addOrderModal = new bootstrap.Modal(document.getElementById('addOrderModal'));
+            addOrderModal.show();
+        }
+
+        function calculateOrderTotal() {
+            const quantity = parseFloat(document.getElementById('orderQuantity').value) || 0;
+            const price = parseFloat(document.getElementById('orderPrice').value) || 0;
+            const gstPercentage = parseFloat(document.getElementById('orderGst').value) || 0;
+            const tcsPercentage = parseFloat(document.getElementById('orderTcs').value) || 0;
+            
+            const subtotal = quantity * price;
+            const gstAmount = subtotal * (gstPercentage / 100);
+            const tcsAmount = subtotal * (tcsPercentage / 100);
+            const finalAmount = subtotal + gstAmount + tcsAmount;
+            
+            document.getElementById('orderTotalPreview').textContent = subtotal.toFixed(2);
+            document.getElementById('orderGstPreview').textContent = gstAmount.toFixed(2);
+            document.getElementById('orderTcsPreview').textContent = tcsAmount.toFixed(2);
+            document.getElementById('orderFinalPreview').textContent = finalAmount.toFixed(2);
+        }
+
+        function saveOrder() {
+            const buyerId = document.getElementById('orderBuyer').value;
+            const materialId = document.getElementById('orderMaterial').value;
+            const quantity = parseFloat(document.getElementById('orderQuantity').value);
+            const unitPrice = parseFloat(document.getElementById('orderPrice').value);
+            const orderDate = document.getElementById('orderDate').value;
+            const notes = document.getElementById('orderNotes').value;
+            const gstPercentage = parseFloat(document.getElementById('orderGst').value);
+            const tcsPercentage = parseFloat(document.getElementById('orderTcs').value);
+            
+            if (!buyerId || !materialId || !quantity || !unitPrice || !orderDate) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const totalAmount = quantity * unitPrice;
+            const orderNumber = 'ORD' + Date.now();
+            
+            const newOrder = {
+                order_number: orderNumber,
+                buyer_id: parseInt(buyerId),
+                material_id: parseInt(materialId),
+                quantity: quantity,
+                unit_price: unitPrice,
+                total_amount: totalAmount,
+                status: 'pending',
+                order_date: orderDate,
+                expected_delivery: new Date(new Date(orderDate).getTime() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 14 days from order date
+                notes: notes,
+                gst_percentage: gstPercentage,
+                tcs_percentage: tcsPercentage
+            };
+            
+            IronTradingDB.create('orders', newOrder);
+            
+            // Update material quantity
+            const material = IronTradingDB.get('materials', parseInt(materialId));
+            if (material) {
+                IronTradingDB.update('materials', material.id, {
+                    quantity: material.quantity - quantity
+                });
+            }
+            
+            alert('Order created successfully!');
+            
+            // Close modal and refresh orders
+          bootstrap.Modal.getInstance(document.getElementById('addOrderModal')).hide();
+            loadSection('orders');
+        }
+
+        function showAddItemModal(type) {
+            const modalTitle = document.getElementById('addItemModalTitle');
+            const itemForm = document.getElementById('itemForm');
+            
+            // Clear previous form content
+            itemForm.innerHTML = '';
+            
+            // Set modal title based on type
+            switch(type) {
+                case 'material':
+                    modalTitle.textContent = 'Add New Material';
+                    itemForm.innerHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="materialName" class="form-label">Material Name</label>
+                                    <input type="text" class="form-control" id="materialName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="materialGrade" class="form-label">Grade</label>
+                                    <input type="text" class="form-control" id="materialGrade" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="materialQuantity" class="form-label">Quantity</label>
+                                    <input type="number" class="form-control" id="materialQuantity" required min="0" step="0.01">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="materialUnit" class="form-label">Unit</label>
+                                    <select class="form-select" id="materialUnit" required>
+                                        <option value="tons">Tons</option>
+                                        <option value="kg">Kilograms</option>
+                                        <option value="pieces">Pieces</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="materialCost" class="form-label">Cost Per Unit (₹)</label>
+                                    <input type="number" class="form-control" id="materialCost" required min="0" step="0.01">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="materialSupplier" class="form-label">Supplier</label>
+                                    <select class="form-select" id="materialSupplier" required>
+                                        <option value="">Select Supplier</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                        <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="materialPurchaseDate" class="form-label">Purchase Date</label>
+                                    <input type="date" class="form-control" id="materialPurchaseDate" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+<label for="materialHsn" class="form-label">HSN Code</label>
+<input type="text" class="form-control" id="materialHsn">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="materialDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="materialDescription" rows="2"></textarea>
+                        </div>
+                    `;
+                    
+                    // Populate supplier dropdown
+                    const suppliers = IronTradingDB.get('partners').filter(p => p.type === 'supplier');
+                    const supplierSelect = document.getElementById('materialSupplier');
+                    suppliers.forEach(supplier => {
+                        supplierSelect.innerHTML += `<option value="${supplier.id}">${supplier.name}</option>`;
+                    });
+                    
+                    // Set current date as default
+document.getElementById('materialPurchaseDate').valueAsDate = new Date();
+                    break;
+                    
+                case 'partner':
+                    modalTitle.textContent = 'Add New Partner';
+                    itemForm.innerHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="partnerName" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="partnerName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="partnerType" class="form-label">Type</label>
+                                    <select class="form-select" id="partnerType" required>
+                                        <option value="">Select Type</option>
+                                        <option value="supplier">Supplier</option>
+                                        <option value="buyer">Buyer</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="partnerContact" class="form-label">Contact Person</label>
+                                    <input type="text" class="form-control" id="partnerContact" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="partnerEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="partnerEmail" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="partnerPhone" class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" id="partnerPhone" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="partnerGst" class="form-label">GSTIN</label>
+                                    <input type="text" class="form-control" id="partnerGst">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="partnerAddress" class="form-label">Address</label>
+                            <textarea class="form-control" id="partnerAddress" rows="2" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="partnerBank" class="form-label">Bank Details</label>
+                            <textarea class="form-control" id="partnerBank" rows="2"></textarea>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'transport':
+                    modalTitle.textContent = 'Add Transport Details';
+                    itemForm.innerHTML = `
+                        <div class="row">
+<div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="transportOrder" class="form-label">Order</label>
+                                            <select class="form-select" id="transportOrder" required>
+                                                <option value="">Select Order</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="transportTransporter" class="form-label">Transporter Name</label>
+                                            <input type="text" class="form-control" id="transportTransporter" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="transportVehicle" class="form-label">Vehicle Number</label>
+                                            <input type="text" class="form-control" id="transportVehicle" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="transportDriver" class="form-label">Driver Name</label>
+                                            <input type="text" class="form-control" id="transportDriver" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="transportDriverContact" class="form-label">Driver Contact</label>
+                                            <input type="tel" class="form-control" id="transportDriverContact" required>
+                                        </div>
+                                    </div>
+<div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="transportCost" class="form-label">Shipping Cost (₹)</label>
+                                            <input type="number" class="form-control" id="transportCost" required min="0" step="0.01">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="transportDispatch" class="form-label">Dispatch Date</label>
+                                            <input type="date" class="form-control" id="transportDispatch" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="transportExpected" class="form-label">Expected Arrival</label>
+                                            <input type="date" class="form-control" id="transportExpected" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="transportStatus" class="form-label">Status</label>
+                                    <select class="form-select" id="transportStatus" required>
+                                        <option value="scheduled">Scheduled</option>
+                                        <option value="in_transit">In Transit</option>
+                                        <option value="delivered">Delivered</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="transportNotes" class="form-label">Notes</label>
+                                    <textarea class="form-control" id="transportNotes" rows="2"></textarea>
+                                </div>
+                            `;
+                            
+                            // Populate order dropdown
+                            const orders = IronTradingDB.get('orders');
+                            const orderSelect = document.getElementById('transportOrder');
+                            orders.forEach(order => {
+                                orderSelect.innerHTML += `<option value="${order.id}">${order.order_number}</option>`;
+                            });
+                            
+                            // Set current date as default for dispatch date
+                            document.getElementById('transportDispatch').valueAsDate = new Date();
+                            // Set expected arrival to 7 days from now
+                            const expectedDate = new Date();
+                            expectedDate.setDate(expectedDate.getDate() + 7);
+                            document.getElementById('transportExpected').valueAsDate = expectedDate;
+                            break;
+                            
+                        case 'employee':
+                            modalTitle.textContent = 'Add Employee';
+                            itemForm.innerHTML = `
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="employeeName" class="form-label">Name</label>
+                                            <input type="text" class="form-control" id="employeeName" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+<label for="employeeEmail" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="employeeEmail" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="employeePhone" class="form-label">Phone</label>
+                                            <input type="tel" class="form-control" id="employeePhone" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="employeePosition" class="form-label">Position</label>
+                                            <input type="text" class="form-control" id="employeePosition" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="employeeSalary" class="form-label">Salary (₹)</label>
+                                            <input type="number" class="form-control" id="employeeSalary" required min="0" step="0.01">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="employeeHireDate" class="form-label">Hire Date</label>
+                                            <input type="date" class="form-control" id="employeeHireDate" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="employeeAddress" class="form-label">Address</label>
+                                    <textarea class="form-control" id="employeeAddress" rows="2" required></textarea>
+                                </div>
+                            `;
+                            
+                            // Set current date as default for hire date
+                            document.getElementById('employeeHireDate').valueAsDate = new Date();
+                            break;
+                    }
+                    
+                    // Store the current type for saving
+                    window.currentItemType = type;
+                    
+                    // Show modal
+                    const addItemModal = new bootstrap.Modal(document.getElementById('addItemModal'));
+                    addItemModal.show();
+                }
+
+                function saveItem() {
+                    const type = window.currentItemType;
+                    let newItem = {};
+                    
+                    switch(type) {
+                        case 'material':
+                            const materialName = document.getElementById('materialName').value;
+                            const materialGrade = document.getElementById('materialGrade').value;
+                            const materialQuantity = parseFloat(document.getElementById('materialQuantity').value);
+                            const materialUnit = document.getElementById('materialUnit').value;
+                            const materialCost = parseFloat(document.getElementById('materialCost').value);
+                            const materialSupplier = document.getElementById('materialSupplier').value;
+                            const materialPurchaseDate = document.getElementById('materialPurchaseDate').value;
+                            const materialHsn = document.getElementById('materialHsn').value;
+                            const materialDescription = document.getElementById('materialDescription').value;
+                            
+                            if (!materialName || !materialGrade || !materialQuantity || !materialUnit || !materialCost || !materialSupplier || !materialPurchaseDate) {
+                                alert('Please fill in all required fields');
+                                return;
+                            }
+                            
+                            newItem = {
+                                name: materialName,
+                                description: materialDescription,
+                                grade: materialGrade,
+                                quantity: materialQuantity,
+                                unit: materialUnit,
+                                cost_per_unit: materialCost,
+                                supplier_id: parseInt(materialSupplier),
+                                purchase_date: materialPurchaseDate,
+                                hsn_code: materialHsn
+                            };
+                            break;
+                            
+                        case 'partner':
+                            const partnerName = document.getElementById('partnerName').value;
+                            const partnerType = document.getElementById('partnerType').value;
+                            const partnerContact = document.getElementById('partnerContact').value;
+                            const partnerEmail = document.getElementById('partnerEmail').value;
+                            const partnerPhone = document.getElementById('partnerPhone').value;
+                            const partnerGst = document.getElementById('partnerGst').value;
+                            const partnerAddress = document.getElementById('partnerAddress').value;
+                            const partnerBank = document.getElementById('partnerBank').value;
+                            
+                            if (!partnerName || !partnerType || !partnerContact || !partnerEmail || !partnerPhone || !partnerAddress) {
+                                alert('Please fill in all required fields');
+                                return;
+                            }
+                            
+                            newItem = {
+                                name: partnerName,
+                                type: partnerType,
+                                contact_person: partnerContact,
+                                email: partnerEmail,
+                                phone: partnerPhone,
+                                address: partnerAddress,
+                                bank_details: partnerBank,
+                                gstin: partnerGst
+                            };
+                            break;
+                            
+                        case 'transport':
+                            const transportOrder = document.getElementById('transportOrder').value;
+                            const transportTransporter = document.getElementById('transportTransporter').value;
+                            const transportVehicle = document.getElementById('transportVehicle').value;
+                            const transportDriver = document.getElementById('transportDriver').value;
+                            const transportDriverContact = document.getElementById('transportDriverContact').value;
+                            const transportCost = parseFloat(document.getElementById('transportCost').value);
+                            const transportDispatch = document.getElementById('transportDispatch').value;
+                            const transportExpected = document.getElementById('transportExpected').value;
+                            const transportStatus = document.getElementById('transportStatus').value;
+                            const transportNotes = document.getElementById('transportNotes').value;
+                            
+                            if (!transportOrder || !transportTransporter || !transportVehicle || !transportDriver || !transportDriverContact || !transportCost || !transportDispatch || !transportExpected || !transportStatus) {
+                                alert('Please fill in all required fields');
+                                return;
+                            }
+                            
+                            newItem = {
+                                order_id: parseInt(transportOrder),
+                                transporter_name: transportTransporter,
+                                vehicle_number: transportVehicle,
+                                driver_name: transportDriver,
+                                driver_contact: transportDriverContact,
+                                shipping_cost: transportCost,
+                                dispatch_date: transportDispatch,
+                                expected_arrival: transportExpected,
+                                status: transportStatus,
+                                notes: transportNotes
+                            };
+                            break;
+                            
+                        case 'employee':
+                            const employeeName = document.getElementById('employeeName').value;
+                            const employeeEmail = document.getElementById('employeeEmail').value;
+                            const employeePhone = document.getElementById('employeePhone').value;
+                            const employeePosition = document.getElementById('employeePosition').value;
+                            const employeeSalary = parseFloat(document.getElementById('employeeSalary').value);
+                            const employeeHireDate = document.getElementById('employeeHireDate').value;
+                            const employeeAddress = document.getElementById('employeeAddress').value;
+                            
+                            if (!employeeName || !employeeEmail || !employeePhone || !employeePosition || !employeeSalary || !employeeHireDate || !employeeAddress) {
+                                alert('Please fill in all required fields');
+                                return;
+                            }
+                            
+                            newItem = {
+                                name: employeeName,
+                                email: employeeEmail,
+                                phone: employeePhone,
+                                position: employeePosition,
+                                salary: employeeSalary,
+                                hire_date: employeeHireDate,
+                                address: employeeAddress
+                            };
+                            break;
+                    }
+                    
+                    IronTradingDB.create(type + 's', newItem);
+                    alert(`${type.charAt(0).toUpperCase() + type.slice(1)} added successfully!`);
+                    
+                    // Close modal and refresh section
+                    bootstrap.Modal.getInstance(document.getElementById('addItemModal')).hide();
+                    loadSection(type + 's');
+                }
+
+                function showAddPaymentModal() {
+                    // Populate order dropdown
+                    const orderSelect = document.getElementById('paymentOrder');
+                    orderSelect.innerHTML = '<option value="">Select Order</option>';
+                    const orders = IronTradingDB.get('orders');
+                    orders.forEach(order => {
+                        orderSelect.innerHTML += `<option value="${order.id}">${order.order_number}</option>`;
+                    });
+                    
+                    // Show modal
+                    const addPaymentModal = new bootstrap.Modal(document.getElementById('addPaymentModal'));
+                    addPaymentModal.show();
+                }
+
+                function updatePaymentInfo() {
+                    const orderId = document.getElementById('paymentOrder').value;
+                    if (!orderId) return;
+                    
+                    const order = IronTradingDB.get('orders', parseInt(orderId));
+                    const payments = IronTradingDB.get('payments');
+                    
+                    // Calculate total paid for this order
+                    const totalPaid = payments.filter(p => p.order_id === parseInt(orderId) && p.status === 'completed')
+                                             .reduce((sum, p) => sum + p.amount, 0);
+                    
+                    const remainingBalance = order.total_amount - totalPaid;
+                    
+                    document.getElementById('paymentOrderTotal').textContent = order.total_amount.toFixed(2);
+                    document.getElementById('paymentPreviouslyPaid').textContent = totalPaid.toFixed(2);
+                    document.getElementById('paymentRemainingBalance').textContent = remainingBalance.toFixed(2);
+                    
+                    // Set maximum payment amount to remaining balance
+                    document.getElementById('paymentAmount').max = remainingBalance;
+                }
+
+                function savePayment() {
+                    const orderId = document.getElementById('paymentOrder').value;
+                    const amount = parseFloat(document.getElementById('paymentAmount').value);
+                    const paymentDate = document.getElementById('paymentDate').value;
+                    const paymentMethod = document.getElementById('paymentMethod').value;
+                    const paymentReference = document.getElementById('paymentReference').value;
+                    const paymentNotes = document.getElementById('paymentNotes').value;
+                    
+                    if (!orderId || !amount || !paymentDate || !paymentMethod) {
+                        alert('Please fill in all required fields');
+                        return;
+                    }
+                    
+                    const order = IronTradingDB.get('orders', parseInt(orderId));
+                    const payments = IronTradingDB.get('payments');
+                    
+                    // Calculate total paid for this order
+                    const totalPaid = payments.filter(p => p.order_id === parseInt(orderId) && p.status === 'completed')
+                                             .reduce((sum, p) => sum + p.amount, 0);
+                    
+                    const remainingBalance = order.total_amount - totalPaid;
+                    
+                    if (amount > remainingBalance) {
+                        alert(`Payment amount cannot exceed remaining balance of ₹${remainingBalance.toFixed(2)}`);
+                        return;
+                    }
+                    
+                    // Determine payment status
+                    const status = amount === remainingBalance ? 'completed' : 'pending';
+                    
+                    const newPayment = {
+                        order_id: parseInt(orderId),
+                        amount: amount,
+                        payment_date: paymentDate,
+                        payment_method: paymentMethod,
+                        reference_number: paymentReference,
+                        status: status,
+                        notes: paymentNotes
+                    };
+                    
+                    IronTradingDB.create('payments', newPayment);
+                    
+                    // If payment completes the order, update order status
+                    if (status === 'completed') {
+                        IronTradingDB.update('orders', parseInt(orderId), {
+                            status: 'completed'
+                        });
+                    }
+                    
+                    alert('Payment added successfully!');
+                    
+                    // Close modal and refresh payments
+                    bootstrap.Modal.getInstance(document.getElementById('addPaymentModal')).hide();
+                    loadSection('payments');
+                }
+
+                function changePassword() {
+                    const currentPassword = document.getElementById('currentPassword').value;
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    
+                    if (!currentPassword || !newPassword || !confirmPassword) {
+                        alert('Please fill in all fields');
+                        return;
+                    }
+                    
+                    if (newPassword !== confirmPassword) {
+                        alert('New passwords do not match');
+                        return;
+                    }
+                    
+                    if (newPassword.length < 8) {
+                        alert('New password must be at least 8 characters long');
+                        return;
+                    }
+                    
+                    // Verify current password
+                    if (currentPassword !== window.currentUser.password) {
+                        alert('Current password is incorrect');
+                        return;
+                    }
+                    
+                    // Update password
+                    const users = IronTradingDB.get('users');
+                    const userIndex = users.findIndex(u => u.id === window.currentUser.id);
+                    
+                    if (userIndex !== -1) {
+                        users[userIndex].password = newPassword;
+                        localStorage.setItem('users', JSON.stringify(users));
+                        
+                        // Update current user
+                        window.currentUser.password = newPassword;
+                        
+                        alert('Password changed successfully!');
+                        bootstrap.Modal.getInstance(document.getElementById('changePasswordModal')).hide();
+                        
+                        // Clear form
+                        document.getElementById('currentPassword').value = '';
+                        document.getElementById('newPassword').value = '';
+                        document.getElementById('confirmPassword').value = '';
+                    }
+                }
+
+                function editItem(type, id) {
+                    alert(`Edit functionality for ${type} with ID ${id} would be implemented here.`);
+                }
+
+                function viewItem(type, id) {
+                    alert(`View functionality for ${type} with ID ${id} would be implemented here.`);
+                }
+
+                function deleteItem(type, id) {
+                    if (confirm(`Are you sure you want to delete this ${type}?`)) {
+                        IronTradingDB.delete(type + 's', id);
+                        alert(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully!`);
+                        loadSection(type + 's');
+                    }
+                }
+
+                function viewOrder(orderId) {
+                    alert(`Viewing order details for order ID: ${orderId}. In a real application, this would show detailed order information.`);
+                }
+            </script>
+        </body>
+        </html>
